@@ -43,14 +43,6 @@ class ContactsDatabaseHelper (context: Context) : SQLiteOpenHelper(context, DATA
         onCreate(db)
     }
 
-    // convert image to uri
-    fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path = insertImage(inContext.contentResolver, inImage, "Title", null)
-        return Uri.parse(path)
-    }
-
     fun insertContact (contact: Contact) {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -58,7 +50,7 @@ class ContactsDatabaseHelper (context: Context) : SQLiteOpenHelper(context, DATA
             put(COLUMN_PHONE, contact.phone)
             put(COLUMN_LON, contact.lon)
             put(COLUMN_LAT, contact.lat)
-            put(COLUMN_SIGN, contact.sign)
+            put(COLUMN_SIGN, contact.sign.toString())
         }
         db.insert(TABLE_NAME,null, values)
         db.close()
