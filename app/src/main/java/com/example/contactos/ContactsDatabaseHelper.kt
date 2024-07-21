@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.MediaStore.Images.Media.insertImage
+import androidx.core.net.toUri
 import java.io.ByteArrayOutputStream
 
 
@@ -54,6 +55,28 @@ class ContactsDatabaseHelper (context: Context) : SQLiteOpenHelper(context, DATA
         }
         db.insert(TABLE_NAME,null, values)
         db.close()
+    }
+
+    fun selectAllContacts (): List<Contact> {
+        val contactList = mutableListOf<Contact>()
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME"
+        val cursor = db.rawQuery(query, null)
+
+        while(cursor.moveToNext()){
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME))
+            val phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE))
+            val lon = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LON))
+            val lat = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAT))
+            val sign = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SIGN))
+
+            val contact = Contact(id, name, phone, lon, lat, sign.toUri())
+            contactList.add(contact)
+        }
+        cursor.close()
+        db.close()
+        return contactList
     }
 
 }
